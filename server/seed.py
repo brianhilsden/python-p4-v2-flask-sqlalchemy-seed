@@ -1,21 +1,18 @@
 #!/usr/bin/env python3
 #server/seed.py
+from random import choice as rc
+from app import app,db
+from models import Pet
+from faker import Faker
 
-from app import app
-from models import db, Pet
 
 with app.app_context():
-
-    # Create an empty list
+    fake = Faker()  
+    Pet.query.delete()
     pets = []
+    species = ["Dog","Cat","Hamster","Snake"]
+    for i in range(10):
+        pets.append(Pet(name = fake.first_name(), species = rc(species) ))
 
-    # Add some Pet instances to the list
-    pets.append(Pet(name = "Fido", species = "Dog"))
-    pets.append(Pet(name = "Whiskers", species = "Cat"))
-    pets.append(Pet(name = "Hermie", species = "Hamster"))
-
-    # Insert each Pet in the list into the database table
     db.session.add_all(pets)
-
-    # Commit the transaction
     db.session.commit()
